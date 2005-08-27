@@ -1,4 +1,3 @@
-
 Summary:	An application server and portal toolkit for building Web sites
 Summary(es):	Un servidor de aplicaciones y un conjunto de herramientas para la construcción de sitios Web
 Summary(pl):	Serwer aplikacji i toolkit portalowy do tworzenia serwisów WWW
@@ -74,10 +73,9 @@ do Zope, outros sub-pacotes estão disponíveis, e você deveria instalar
 eles ao invés desse RPM.
 
 %package -n python-zope
-Summary:	Python packages developed as part of the Zope 3 project.
-Summary(pl):	Modu³y pythona rozwijane w projekcie Zope 3.
+Summary:	Python packages developed as part of the Zope 3 project
+Summary(pl):	Modu³y Pythona rozwijane w projekcie Zope 3
 Group:		Development/Tools
-Obsoletes:	ZopeInterface
 Provides:	ZopeInterface
 Provides:	python-zope-cachedescriptors
 Provides:	python-zope-component
@@ -103,15 +101,25 @@ Provides:	python-zope-tal
 Provides:	python-zope-tales
 Provides:	python-zope-testing
 Provides:	python-zope-thread
+Obsoletes:	ZopeInterface
 
 %description -n python-zope
-The "zope" package is a pure namespace package holding packages developed as
-part of the Zope 3 project.
+The "zope" package is a pure namespace package holding packages
+developed as part of the Zope 3 project.
 
-Generally, the immediate subpackages of the "zope" package should be useful and
-usable outside of the Zope application server.  Subpackages of the "zope"
-package should have minimal interdependencies, although most depend on
-"zope.interface".
+Generally, the immediate subpackages of the "zope" package should be
+useful and usable outside of the Zope application server. Subpackages
+of the "zope" package should have minimal interdependencies, although
+most depend on "zope.interface".
+
+%description -n python-zope -l pl
+Pakiet "zope" to pakiet czystej przestrzeni nazw przechowuj±cej
+pakiety tworzone jako czê¶æ projektu Zope 3.
+
+Ogólnie bezpo¶rednie podpakiety pakietu "zope" powinny byæ przydatne i
+u¿ywalne poza serwerem aplikacji Zope. Podpakiety pakietu "zope"
+powinny mieæ minimalne zale¿no¶ci wzajemne, chocia¿ wiêkszo¶æ zale¿y
+od "zope.interface".
 
 %prep
 %setup -q -n Zope-%{version}%{sub_ver}

@@ -9,7 +9,7 @@ Release:	0.%{sub_ver}.0.1
 License:	Zope Public License (ZPL)
 Group:		Networking/Daemons
 Source0:	http://www.zope.org/Products/Zope3/%{version}%{sub_ver}/%{name}-%{version}%{sub_ver}.tgz
-# Source0-md5:	66876823e53fbd0d4a8a7262d7ce251b
+# Source0-md5:	e22eeeae5de89c0eea9edabe3f2c3c4d
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
 Source3:	%{name}.logrotate

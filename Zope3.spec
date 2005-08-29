@@ -1,3 +1,7 @@
+#
+# TODO:
+#	- product registration mechanism (like installzopeproduct script for Zope 2)
+#
 Summary:	An application server and portal toolkit for building Web sites
 Summary(es):	Un servidor de aplicaciones y un conjunto de herramientas para la construcción de sitios Web
 Summary(pl):	Serwer aplikacji i toolkit portalowy do tworzenia serwisów WWW
@@ -13,6 +17,7 @@ Source0:	http://www.zope.org/Products/Zope3/%{version}%{sub_ver}/%{name}-%{versi
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
 Source3:	%{name}.logrotate
+Source4:	mkzope3instance
 URL:		http://dev.zope.org/Zope3
 BuildRequires:	python-devel >= 1:2.4.1
 BuildRequires:	perl-base
@@ -30,7 +35,7 @@ Requires:	logrotate
 Requires:	python >= 2.4.1
 Requires:	python-modules >= 2.4.1
 Requires:	python-libs >= 2.4.1
-Requires:	python-zope-interface = %{epoch}:%{version}-%{release}
+Requires:	python-zope = %{epoch}:%{version}-%{release}
 %pyrequires_eq	python
 Provides:	group(zope)
 Provides:	user(zope)
@@ -77,30 +82,30 @@ Summary:	Python packages developed as part of the Zope 3 project
 Summary(pl):	Modu³y Pythona rozwijane w projekcie Zope 3
 Group:		Development/Tools
 Provides:	ZopeInterface
-Provides:	python-zope-cachedescriptors
-Provides:	python-zope-component
-Provides:	python-zope-configuration
-Provides:	python-zope-deprecation
-Provides:	python-zope-documenttemplate
-Provides:	python-zope-event
-Provides:	python-zope-exceptions
-Provides:	python-zope-hookable
-Provides:	python-zope-i18n
-Provides:	python-zope-i18nmessageid
-Provides:	python-zope-index
-Provides:	python-zope-interface
-Provides:	python-zope-modulealias
-Provides:	python-zope-pagetemplate
-Provides:	python-zope-proxy
-Provides:	python-zope-publisher
-Provides:	python-zope-schema
-Provides:	python-zope-security
-Provides:	python-zope-server
-Provides:	python-zope-structuredtext
-Provides:	python-zope-tal
-Provides:	python-zope-tales
-Provides:	python-zope-testing
-Provides:	python-zope-thread
+Provides:	python-zope-cachedescriptors = %{epoch}:%{version}-%{release}
+Provides:	python-zope-component = %{epoch}:%{version}-%{release}
+Provides:	python-zope-configuration = %{epoch}:%{version}-%{release}
+Provides:	python-zope-deprecation = %{epoch}:%{version}-%{release}
+Provides:	python-zope-documenttemplate = %{epoch}:%{version}-%{release}
+Provides:	python-zope-event = %{epoch}:%{version}-%{release}
+Provides:	python-zope-exceptions = %{epoch}:%{version}-%{release}
+Provides:	python-zope-hookable = %{epoch}:%{version}-%{release}
+Provides:	python-zope-i18n = %{epoch}:%{version}-%{release}
+Provides:	python-zope-i18nmessageid = %{epoch}:%{version}-%{release}
+Provides:	python-zope-index = %{epoch}:%{version}-%{release}
+Provides:	python-zope-interface = %{epoch}:%{version}-%{release}
+Provides:	python-zope-modulealias = %{epoch}:%{version}-%{release}
+Provides:	python-zope-pagetemplate = %{epoch}:%{version}-%{release}
+Provides:	python-zope-proxy = %{epoch}:%{version}-%{release}
+Provides:	python-zope-publisher = %{epoch}:%{version}-%{release}
+Provides:	python-zope-schema = %{epoch}:%{version}-%{release}
+Provides:	python-zope-security = %{epoch}:%{version}-%{release}
+Provides:	python-zope-server = %{epoch}:%{version}-%{release}
+Provides:	python-zope-structuredtext = %{epoch}:%{version}-%{release}
+Provides:	python-zope-tal = %{epoch}:%{version}-%{release}
+Provides:	python-zope-tales = %{epoch}:%{version}-%{release}
+Provides:	python-zope-testing = %{epoch}:%{version}-%{release}
+Provides:	python-zope-thread = %{epoch}:%{version}-%{release}
 Obsoletes:	ZopeInterface
 
 %description -n python-zope
@@ -123,10 +128,13 @@ od "zope.interface".
 
 %prep
 %setup -q -n Zope-%{version}%{sub_ver}
+cp %{SOURCE4} ./mkzope3instance
+chmod a+x ./mkzope3instance
 
 %build
 ./configure \
-	--prefix=%{zope_dir}
+	--prefix=%{zope_dir} \
+	--force
 %{__make}
 
 %install
@@ -140,51 +148,42 @@ install -d $RPM_BUILD_ROOT{%{py_sitedir},%{_sbindir}} \
 python install.py -q install --skip-build --home "%{zope_dir}" --root "$RPM_BUILD_ROOT"
 mv $RPM_BUILD_ROOT%{zope_dir}/lib/python/zope  $RPM_BUILD_ROOT%{py_sitedir}
 
-find $RPM_BUILD_ROOT%{py_sitedir}/zope -name '*.txt' -o -name '*.cfg' | xargs rm
+cat >$RPM_BUILD_ROOT%{zope_dir}/bin/mkzopeinstance <<EOF
+#!/usr/bin/python
+import sys
+from zope.app.server.mkzopeinstance import main
+sys.exit(main(from_checkout=False))
+EOF
+
+PYTHONPATH="$RPM_BUILD_ROOT%{py_sitedir}/zope:$RPM_BUILD_ROOT%{zope_dir}/lib/python" \
+	DESTDIR="$RPM_BUILD_ROOT" sh -x ./mkzope3instance main -u zope:zope
+
+cat >> $RPM_BUILD_ROOT%{py_sitedir}/zope/app/__init__.py <<EOF
+import sys
+sys.path.insert(0,"%{zope_dir}/lib/python")
+EOF
 
 %py_comp $RPM_BUILD_ROOT%{py_sitedir}/zope
 %py_ocomp $RPM_BUILD_ROOT%{py_sitedir}/zope
+%py_postclean
 
-ln -sf %{zope_dir}/bin/mkzopeinstance $RPM_BUILD_ROOT%{_sbindir}/mkzope3instance
-for f in zconfig zconfig_schema2html zopetest ; do
-	ln -sf %{zope_dir}/bin/"$f" $RPM_BUILD_ROOT%{_sbindir}/"$f"3
+rm $RPM_BUILD_ROOT%{zope_dir}/zopeskel/bin/{*.bat.in,zopeservice*}
+
+for f in zconfig zconfig_schema2html zopetest; do
+	ln -sf %{zope_dir}/bin/"$f" $RPM_BUILD_ROOT%{_sbindir}/"$f"
 done
 for f in mkzeoinst runzeo zdctl zdrun zeoctl zeopasswd ; do
-	ln -sf %{zope_dir}/bin/"$f".py $RPM_BUILD_ROOT%{_sbindir}/"$f"3
+	ln -sf %{zope_dir}/bin/"$f".py $RPM_BUILD_ROOT%{_sbindir}/"$f"
 done
 
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/zope3
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/zope3
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/logrotate.d/zope3
+install %{SOURCE4} $RPM_BUILD_ROOT%{_sbindir}/mkzope3instance
 
-touch $RPM_BUILD_ROOT/var/log/zope3/main/event.log
-touch $RPM_BUILD_ROOT/var/log/zope3/main/Z2.log
-
-
-#install -d $RPM_BUILD_ROOT{/var/lib/zope/main,/var/run/zope,/var/log/zope/main} \
-#	$RPM_BUILD_ROOT{/etc/logrotate.d,/etc/sysconfig,/etc/rc.d/init.d} \
-#	$RPM_BUILD_ROOT{%{_sysconfdir}/zope/main,%{_sbindir}} \
-#	$RPM_BUILD_ROOT%{zope_dir}/bin
-#
-#ln -sfn /usr/bin/python $RPM_BUILD_ROOT%{zope_dir}/bin/python
-#
-#%{__make} install \
-#	INSTALL_FLAGS="--root $RPM_BUILD_ROOT"
-#
-#mv $RPM_BUILD_ROOT%{zope_dir}/bin/zpasswd.py $RPM_BUILD_ROOT%{_sbindir}/zpasswd
-#mv $RPM_BUILD_ROOT%{zope_dir}/skel $RPM_BUILD_ROOT%{_sysconfdir}/zope
-#mv $RPM_BUILD_ROOT{%{zope_dir}/import/*,%{_sysconfdir}/zope/skel/import}
-#
-#rm -rf $RPM_BUILD_ROOT%{zope_dir}/doc
-#rm -rf $RPM_BUILD_ROOT%{_sysconfdir}/zope/skel/log
-#rm -f $RPM_BUILD_ROOT%{_sysconfdir}/zope/skel/bin/{runzope.bat,zopeservice.py}.in
-#
-#install %{SOURCE4} $RPM_BUILD_ROOT%{_sbindir}/mkzopeinstance
-#install %{SOURCE5} $RPM_BUILD_ROOT%{_sbindir}/mkzeoinstance
-#install %{SOURCE6} $RPM_BUILD_ROOT%{_sbindir}/runzope
-#install %{SOURCE7} $RPM_BUILD_ROOT%{_sbindir}/zopectl
-#install %{SOURCE8} $RPM_BUILD_ROOT%{_sbindir}/installzopeproduct
-#
+touch $RPM_BUILD_ROOT/var/log/zope3/main/access.log
+touch $RPM_BUILD_ROOT/var/log/zope3/main/transcript.log
+touch $RPM_BUILD_ROOT/var/log/zope3/main/z3.log
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -194,19 +193,19 @@ rm -rf $RPM_BUILD_ROOT
 %useradd -u 112 -d /var/lib/zope/main -s /bin/false -c "Zope User" -g zope zope
 
 %post
-/sbin/chkconfig --add zope
-if [ ! -f /etc/zope/main/zope.conf ] ; then
-	echo "Creating initial 'main' instance..."
-	/usr/sbin/mkzope3instance main zope:zope
-	echo "Instance created. Listening on 127.0.0.1:8080, initial user: 'zope' with password: 'zope'"
+/sbin/chkconfig --add zope3
+if [ -f /var/lock/subsys/zope3-main ]; then
+	/etc/rc.d/init.d/zope3 restart 1>&2
+else
+	echo "Run \"/etc/rc.d/init.d/zopew start\" to start Zope 3 daemon."
 fi
 
 %preun
 if [ "$1" = "0" ]; then
-	if [ -f /var/lock/subsys/zope ]; then
-		/etc/rc.d/init.d/zope stop
+	if [ -f /var/lock/subsys/zope3 ]; then
+		/etc/rc.d/init.d/zope3 stop
 	fi
-	/sbin/chkconfig --del zope
+	/sbin/chkconfig --del zope3
 fi
 
 %postun
@@ -234,17 +233,31 @@ fi
 %{zope_dir}/zopeskel/var
 %{zope_dir}/zopeskel/README.txt
 %{py_sitedir}/zope/app
-%attr(775,zope,zope) %dir /var/run/zope3
-%attr(775,zope,zope) %dir /var/lib/zope3
-%attr(775,zope,zope) %dir /var/lib/zope3/main
-%attr(775,zope,zope) %dir /var/log/zope3
-%attr(775,zope,zope) %dir /var/log/zope3/main
-%attr(640,root,root) %dir /etc/zope3
-%attr(640,root,root) %dir /etc/zope3/main
+%attr(775,root,zope) %dir /var/run/zope3
+%attr(755,root,root) %dir /var/lib/zope3
+%attr(775,root,root) %dir /var/lib/zope3/main
+%dir /var/lib/zope3/main/bin
+%attr(755,root,root) %dir /var/lib/zope3/main/bin/*
+/var/lib/zope3/main/etc
+/var/lib/zope3/main/lib
+/var/lib/zope3/main/log
+%attr(775,root,zope) %dir /var/lib/zope3/main/var
+/var/lib/zope3/main/var/README.txt
+/var/lib/zope3/main/README.txt
+%attr(755,root,zope) %dir /var/log/zope3
+%attr(775,root,zope) %dir /var/log/zope3/main
+%attr(751,root,zope) %dir /etc/zope3
+%attr(751,root,zope) %dir /etc/zope3/main
+%attr(751,root,zope) %dir /etc/zope3/main/package-includes
+%attr(640,root,zope) %dir /etc/zope3/main/*.conf
+/etc/zope3/main/*.zcml
+/etc/zope3/main/package-includes/*.zcml
+/etc/zope3/main/package-includes/README.txt
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/logrotate.d/zope3
 %attr(640,root,root) /etc/sysconfig/zope3
-%ghost /var/log/zope3/main/event.log
-%ghost /var/log/zope3/main/Z2.log
+%ghost /var/log/zope3/main/access.log
+%ghost /var/log/zope3/main/transcript.log
+%ghost /var/log/zope3/main/z3.log
 
 %files -n python-zope
 %defattr(644,root,root,755)

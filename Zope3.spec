@@ -155,7 +155,7 @@ from zope.app.server.mkzopeinstance import main
 sys.exit(main(from_checkout=False))
 EOF
 
-PYTHONPATH="$RPM_BUILD_ROOT%{py_sitedir}/zope:$RPM_BUILD_ROOT%{zope_dir}/lib/python" \
+PYTHONPATH="$RPM_BUILD_ROOT%{py_sitedir}:$RPM_BUILD_ROOT%{zope_dir}/lib/python" \
 	DESTDIR="$RPM_BUILD_ROOT" sh -x ./mkzope3instance main -u zope:zope
 
 cat >> $RPM_BUILD_ROOT%{py_sitedir}/zope/app/__init__.py <<EOF

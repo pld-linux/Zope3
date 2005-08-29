@@ -1,0 +1,33 @@
+#!/bin/sh
+
+instance_name="$1"
+instance_home="$DESTDIR/var/lib/zope3/$instance_name"
+
+if [ -z "$1" -o "$1" = "-h" -o "$1" = "--help" ] ; then
+	echo "Usage:"
+	echo "  $0 instance_name [mkzopeinstance.py options]"
+	exit 1
+fi
+
+if [ -f "$DESTDIR/etc/zope3/$instance_name/zope.conf" ] ; then
+	echo "Instance already exists" >&2
+	exit 1
+fi
+
+shift
+
+"$DESTDIR/usr/lib/zope3/bin/mkzopeinstance" -d "$instance_home" $@  || exit $?
+mkdir -p "$DESTDIR/etc/zope3/$instance_name" "$DESTDIR/var/log/zope3/$instance_name"
+mv "$instance_home/etc"/* "$DESTDIR/etc/zope3/$instance_name"
+rmdir "$instance_home/etc"
+rm "$instance_home/log/README.txt"
+rmdir "$instance_home/log"
+ln -s "/etc/zope3/$instance_name" "$instance_home/etc"
+ln -s "/var/log/zope3/$instance_name" "$instance_home/log"
+chown root:zope "$instance_home/var" "/var/log/zope3/$instance_name" "/etc/zope3/$instance_name" 2>/dev/null 
+chmod 771 "$instance_home/var"  "/var/log/zope3/$instance_name"
+chmod 751 "$DESTDIR/etc/zope3/$instance_name"
+
+if [ -n "$DESTDIR" ] ; then
+	sed -i -e"s,$DESTDIR,," "$DESTDIR/etc/zope3/$instance_name"/*.conf "$instance_home/bin"/*
+fi

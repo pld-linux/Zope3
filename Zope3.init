@@ -1,0 +1,160 @@
+#!/bin/sh
+# Zope 3
+#
+# chkconfig: 345 90 10
+# description: Starts and stops the Zope instances
+#
+#
+
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Source networking configuration.
+. /etc/sysconfig/network
+
+# Check that networking is up.
+if is_yes "${NETWORKING}"; then
+	if [ ! -f /var/lock/subsys/network ]; then
+		msg_network_down "Zope 3"
+		exit 1
+	fi
+else
+	exit 0
+fi
+
+# Zope settings.
+INSTANCES="main"
+[ -f /etc/sysconfig/zope3 ] && . /etc/sysconfig/zope3
+
+zope_ctl()
+{
+	message="$1"
+	instance_home="$2"
+	action="$3"
+	errors=""
+	typeset -i exit_code=0
+	
+	show "$message"; busy
+	if ! cd "$instance_home/var" 2>/dev/null ; then
+		fail
+		log_failes "$message"
+		exit_code=1
+		errors="Cannot chdir to $instance_home/var"
+	elif errors=$(initlog -c "su -s/bin/sh zope -c \"$instance_home/bin/zopectl $action\"" 2>&1) ; then
+		ok
+		log_success "$message"
+	else
+		fail
+		log_failed "$message"
+		exit_code=1
+	fi
+	[ -n "$errors" ] && [ $exit_code -eq 1 ] && echo "$errors"
+	return $exit_code
+}
+
+start_instances()
+{
+    RETVAL=1
+    for INSTANCE_NAME in $INSTANCES
+    do
+	INSTANCE_HOME="/var/lib/zope3/$INSTANCE_NAME"
+
+	if [ -f /var/lock/subsys/"zope3-$INSTANCE_NAME" ]; then
+		msg_already_running "Zope 3 instance $INSTANCE_NAME"
+		continue	
+	fi
+
+	zope_ctl "Starting Zope instance $INSTANCE_NAME" "$INSTANCE_HOME" start
+	RET=$?
+	if [ $RET -eq 0 ]; then
+		touch /var/lock/subsys/"zope3-$INSTANCE_NAME"
+		RETVAL=0
+	fi
+    done
+    return $RETVAL
+}
+
+stop_instances()
+{
+    RETVAL=1
+    for INSTANCE_NAME in $INSTANCES
+    do
+	INSTANCE_HOME="/var/lib/zope3/$INSTANCE_NAME"
+
+	if [ ! -f /var/lock/subsys/"zope3-$INSTANCE_NAME" ]; then
+		msg_not_running "Zope 3 instance $INSTANCE_NAME"
+		continue	
+	fi
+	
+	zope_ctl "Stopping Zope instance $INSTANCE_NAME" "$INSTANCE_HOME" stop
+
+	RET=$?
+	if [ $RET -eq 0 ]; then
+		RETVAL=0
+	fi
+	rm -f /var/lock/subsys/"zope3-$INSTANCE_NAME"
+    done
+    return $RETVAL
+}
+
+stat_instances()
+{
+    for INSTANCE_NAME in $INSTANCES
+    do
+    	INSTANCE_HOME=/var/lib/zope3/"$INSTANCE_NAME"
+	echo -n "$INSTANCE_NAME: "
+	cd "$INSTANCE_HOME/var" && "$INSTANCE_HOME"/bin/zopectl status
+    done
+}
+
+# See how we were called.
+case "$1" in
+  start)
+  		msg_starting "Zope 3"
+		started
+		start_instances
+		RETVAL=$?
+		if [ "$RETVAL" = 0 ] ; then
+			msg_starting "Zope 3"
+			ok
+			touch /var/lock/subsys/zope
+		else
+			msg_starting "Zope 3"
+			fail
+		fi
+	;;
+  stop)
+	if [ -f /var/lock/subsys/zope ]; then
+        	msg_stopping "Zope 3"
+		started
+		stop_instances
+		RETVAL=$?
+		if [ "$RETVAL" = 0 ] ; then
+			msg_stopping "Zope 3"
+			ok
+		else
+			msg_stopping "Zope 3"
+			fail
+		fi
+        	rm -f /var/lock/subsys/zope >/dev/null 2>&1
+        else
+	        msg_not_running "Zope 3"
+                exit 1
+        fi
+	;;
+  status)
+	stat_instances
+	;;
+  restart|force-reload)
+	$0 stop
+	$0 start
+	exit $?
+	;;
+  *)
+	msg_usage "$0 {start|stop|restart|force-reload|status}"
+	exit 3
+	;;
+esac
+
+exit $RETVAL

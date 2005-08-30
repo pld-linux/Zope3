@@ -20,6 +20,7 @@ URL:		http://dev.zope.org/Zope3
 BuildRequires:	python-devel >= 1:2.4.1
 BuildRequires:	perl-base
 BuildRequires:	rpmbuild(macros) >= 1.213
+Requires:	rc-scripts
 Requires(post,preun):	rc-scripts
 Requires(pre):	/bin/id
 Requires(pre):	/usr/bin/getgid

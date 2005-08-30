@@ -1,7 +1,3 @@
-#
-# TODO:
-#	- product registration mechanism (like installzopeproduct script for Zope 2)
-#
 Summary:	An application server and portal toolkit for building Web sites
 Summary(es):	Un servidor de aplicaciones y un conjunto de herramientas para la construcción de sitios Web
 Summary(pl):	Serwer aplikacji i toolkit portalowy do tworzenia serwisów WWW
@@ -9,7 +5,7 @@ Summary(pt_BR):	Um servidor de aplicações e um conjunto de ferramentas para cons
 Name:		Zope3
 Version:	3.1.0
 %define		sub_ver c1
-Release:	0.%{sub_ver}.0.1
+Release:	0.%{sub_ver}.0.2
 License:	Zope Public License (ZPL)
 Group:		Networking/Daemons
 Source0:	http://www.zope.org/Products/Zope3/%{version}%{sub_ver}/%{name}-%{version}%{sub_ver}.tgz
@@ -18,11 +14,13 @@ Source1:	%{name}.init
 Source2:	%{name}.sysconfig
 Source3:	%{name}.logrotate
 Source4:	mkzope3instance
+Source5:	installzope3package
+Patch0:		%{name}-skeleton_path.patch
 URL:		http://dev.zope.org/Zope3
 BuildRequires:	python-devel >= 1:2.4.1
 BuildRequires:	perl-base
 BuildRequires:	rpmbuild(macros) >= 1.213
-PreReq:		rc-scripts
+Requires(post,preun):	rc-scripts
 Requires(pre):	/bin/id
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
@@ -41,7 +39,8 @@ Provides:	group(zope)
 Provides:	user(zope)
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define		zope_dir /usr/lib/zope3
+%define		zope_libdir /usr/lib/zope3
+%define		zope_datadir /usr/share/zope3
 
 %description
 The Z Object Programming Environment (Zope) is a free, Open Source
@@ -49,8 +48,8 @@ Python-based application server for building high-performance, dynamic
 web sites, using a powerful and simple scripting object model and
 high-performance, integrated object database.
 
-This project is a redesign of Zope 2 and seeks to improve the Zope development
-experience through the use of Interfaces and Components.
+This project is a redesign of Zope 2 and seeks to improve the Zope
+development experience through the use of Interfaces and Components.
 
 %description -l es
 Zope es una aplicación basada en Python, Open Source[tm], para la
@@ -128,58 +127,63 @@ od "zope.interface".
 
 %prep
 %setup -q -n Zope-%{version}%{sub_ver}
+%patch0 -p1
+
 cp %{SOURCE4} ./mkzope3instance
 chmod a+x ./mkzope3instance
 
 %build
 ./configure \
-	--prefix=%{zope_dir} \
+	--prefix=%{zope_libdir} \
 	--force
 %{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-install -d $RPM_BUILD_ROOT{%{py_sitedir},%{_sbindir}} \
+install -d $RPM_BUILD_ROOT{%{py_sitedir},%{_sbindir},%{zope_datadir}/lib/python} \
 	$RPM_BUILD_ROOT{/etc/logrotate.d,/etc/sysconfig,/etc/rc.d/init.d} \
 	$RPM_BUILD_ROOT{/var/lib/zope3/main,/var/run/zope3,/var/log/zope3/main} \
-	$RPM_BUILD_ROOT%{_sysconfdir}/zope3/main
-	
-python install.py -q install --skip-build --home "%{zope_dir}" --root "$RPM_BUILD_ROOT"
-mv $RPM_BUILD_ROOT%{zope_dir}/lib/python/zope  $RPM_BUILD_ROOT%{py_sitedir}
+$RPM_BUILD_ROOT%{_sysconfdir}/zope3/main
 
-cat >$RPM_BUILD_ROOT%{zope_dir}/bin/mkzopeinstance <<EOF
+python install.py -q install --skip-build --home "%{zope_libdir}" --root "$RPM_BUILD_ROOT"
+mv $RPM_BUILD_ROOT%{zope_libdir}/lib/python/zope  $RPM_BUILD_ROOT%{py_sitedir}
+rm $RPM_BUILD_ROOT%{zope_libdir}/zopeskel/bin/{*.bat.in,zopeservice*}
+mv $RPM_BUILD_ROOT%{zope_libdir}/zopeskel $RPM_BUILD_ROOT%{_sysconfdir}/zope3
+
+cat >$RPM_BUILD_ROOT%{zope_libdir}/bin/mkzopeinstance <<EOF
 #!/usr/bin/python
 import sys
 from zope.app.server.mkzopeinstance import main
 sys.exit(main(from_checkout=False))
 EOF
 
-PYTHONPATH="$RPM_BUILD_ROOT%{py_sitedir}:$RPM_BUILD_ROOT%{zope_dir}/lib/python" \
-	DESTDIR="$RPM_BUILD_ROOT" sh -x ./mkzope3instance main -u zope:zope
+PYTHONPATH="$RPM_BUILD_ROOT%{py_sitedir}:$RPM_BUILD_ROOT%{zope_libdir}/lib/python" \
+	DESTDIR="$RPM_BUILD_ROOT" ./mkzope3instance main \
+-u zope:zope -s $RPM_BUILD_ROOT%{_sysconfdir}/zope3/zopeskel
 
 cat >> $RPM_BUILD_ROOT%{py_sitedir}/zope/app/__init__.py <<EOF
 import sys
-sys.path.insert(0,"%{zope_dir}/lib/python")
+sys.path.insert(0,"%{zope_libdir}/lib/python")
+sys.path.insert(0,"%{zope_datadir}/lib/python")
 EOF
 
 %py_comp $RPM_BUILD_ROOT%{py_sitedir}/zope
 %py_ocomp $RPM_BUILD_ROOT%{py_sitedir}/zope
 %py_postclean
 
-rm $RPM_BUILD_ROOT%{zope_dir}/zopeskel/bin/{*.bat.in,zopeservice*}
-
 for f in zconfig zconfig_schema2html zopetest; do
-	ln -sf %{zope_dir}/bin/"$f" $RPM_BUILD_ROOT%{_sbindir}/"$f"
+	ln -sf %{zope_libdir}/bin/"$f" $RPM_BUILD_ROOT%{_sbindir}/"$f"
 done
 for f in mkzeoinst runzeo zdctl zdrun zeoctl zeopasswd ; do
-	ln -sf %{zope_dir}/bin/"$f".py $RPM_BUILD_ROOT%{_sbindir}/"$f"
+	ln -sf %{zope_libdir}/bin/"$f".py $RPM_BUILD_ROOT%{_sbindir}/"$f"
 done
 
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/zope3
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/zope3
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/logrotate.d/zope3
 install %{SOURCE4} $RPM_BUILD_ROOT%{_sbindir}/mkzope3instance
+install %{SOURCE5} $RPM_BUILD_ROOT%{_sbindir}/installzope3package
 
 touch $RPM_BUILD_ROOT/var/log/zope3/main/access.log
 touch $RPM_BUILD_ROOT/var/log/zope3/main/transcript.log
@@ -219,26 +223,19 @@ fi
 %doc Zope/doc/*
 %attr(754,root,root) /etc/rc.d/init.d/zope3
 %attr(755,root,root) %{_sbindir}/*
-%dir %{zope_dir}
-%dir %{zope_dir}/bin
-%attr(755,root,root) %{zope_dir}/bin/*
-%{zope_dir}/include
-%{zope_dir}/lib
-%dir %{zope_dir}/zopeskel
-%dir %{zope_dir}/zopeskel/bin
-%attr(755,root,root) %{zope_dir}/zopeskel/bin/*
-%{zope_dir}/zopeskel/etc
-%{zope_dir}/zopeskel/lib
-%{zope_dir}/zopeskel/log
-%{zope_dir}/zopeskel/var
-%{zope_dir}/zopeskel/README.txt
+%dir %{zope_libdir}
+%dir %{zope_libdir}/bin
+%attr(755,root,root) %{zope_libdir}/bin/*
+%{zope_libdir}/include
+%{zope_libdir}/lib
+%{zope_datadir}
 %{py_sitedir}/zope/app
 %attr(775,root,zope) %dir /var/run/zope3
 %attr(755,root,root) %dir /var/lib/zope3
 %attr(775,root,root) %dir /var/lib/zope3/main
 %dir /var/lib/zope3/main/bin
 %attr(755,root,root) %dir /var/lib/zope3/main/bin/*
-/var/lib/zope3/main/etc
+/var/lib/zope3/main%{_sysconfdir}
 /var/lib/zope3/main/lib
 /var/lib/zope3/main/log
 %attr(775,root,zope) %dir /var/lib/zope3/main/var
@@ -246,15 +243,23 @@ fi
 /var/lib/zope3/main/README.txt
 %attr(755,root,zope) %dir /var/log/zope3
 %attr(775,root,zope) %dir /var/log/zope3/main
-%attr(751,root,zope) %dir /etc/zope3
-%attr(751,root,zope) %dir /etc/zope3/main
-%attr(751,root,zope) %dir /etc/zope3/main/package-includes
-%attr(640,root,zope) %dir /etc/zope3/main/*.conf
-/etc/zope3/main/*.zcml
-/etc/zope3/main/package-includes/*.zcml
-/etc/zope3/main/package-includes/README.txt
-%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/logrotate.d/zope3
-%attr(640,root,root) /etc/sysconfig/zope3
+%attr(751,root,zope) %dir %{_sysconfdir}/zope3
+%attr(751,root,zope) %dir %{_sysconfdir}/zope3/main
+%attr(751,root,zope) %dir %{_sysconfdir}/zope3/main/package-includes
+%attr(640,root,zope) %dir %{_sysconfdir}/zope3/main/*.conf
+%{_sysconfdir}/zope3/main/*.zcml
+%{_sysconfdir}/zope3/main/package-includes/*.zcml
+%{_sysconfdir}/zope3/main/package-includes/README.txt
+%dir %{_sysconfdir}/zope3/zopeskel
+%dir %{_sysconfdir}/zope3/zopeskel/bin
+%attr(755,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/zope3/zopeskel/bin/*
+%config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/zope3/zopeskel%{_sysconfdir}
+%config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/zope3/zopeskel/lib
+%config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/zope3/zopeskel/log
+%config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/zope3/zopeskel/var
+%config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/zope3/zopeskel/README.txt
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/zope3
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/zope3
 %ghost /var/log/zope3/main/access.log
 %ghost /var/log/zope3/main/transcript.log
 %ghost /var/log/zope3/main/z3.log

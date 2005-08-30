@@ -1,0 +1,26 @@
+#!/bin/sh
+
+pkg_dir="$1"
+pkg_name="$2"
+
+if [ "${pkg_dir}" != "-d" -a ! -d "${pkg_dir}" -o -z "${pkg_name}" ] ; then
+	echo "Usage:" >&2
+	echo "   $0 <package_directory> <package_name>"
+	echo "   $0 [-d] <package_name>"
+	exit 1
+fi
+
+AUTO_INSTALL_PRODUCTS=main
+[ -f /etc/sysconfig/zope3 ] && . /etc/sysconfig/zope3
+
+if [ "${pkg_dir}" != "-d" ] ; then
+	for instance in $AUTO_INSTALL_PRODUCTS ; do
+		ln -s "/etc/zope3/zopeskel/package-includes/${pkg_name}"-{meta,configure}.zcml "/etc/zope3/${instance}/package-includes"
+	done
+else
+	for instance in $AUTO_INSTALL_PRODUCTS ; do
+		rm -f "/etc/zope3/${instance}/package-includes/${pkg_name}"-{meta,configure}.zcml 2>/dev/null
+	done
+fi
+
+exit 0

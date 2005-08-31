@@ -118,14 +118,14 @@ case "$1" in
 		if [ "$RETVAL" = 0 ] ; then
 			msg_starting "Zope 3"
 			ok
-			touch /var/lock/subsys/zope
+			touch /var/lock/subsys/zope3
 		else
 			msg_starting "Zope 3"
 			fail
 		fi
 	;;
   stop)
-	if [ -f /var/lock/subsys/zope ]; then
+	if [ -f /var/lock/subsys/zope3 ]; then
         	msg_stopping "Zope 3"
 		started
 		stop_instances
@@ -137,7 +137,7 @@ case "$1" in
 			msg_stopping "Zope 3"
 			fail
 		fi
-        	rm -f /var/lock/subsys/zope >/dev/null 2>&1
+        	rm -f /var/lock/subsys/zope3 >/dev/null 2>&1
         else
 	        msg_not_running "Zope 3"
                 exit 1

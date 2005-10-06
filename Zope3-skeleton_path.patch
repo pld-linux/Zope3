@@ -1,6 +1,6 @@
-diff -dur -x '*~' Zope-3.1.0c1.orig/Dependencies/zope.app.server-Zope-3.1.0c1/zope.app.server/mkzopeinstance.py Zope-3.1.0c1/Dependencies/zope.app.server-Zope-3.1.0c1/zope.app.server/mkzopeinstance.py
---- Zope-3.1.0c1.orig/Dependencies/zope.app.server-Zope-3.1.0c1/zope.app.server/mkzopeinstance.py	2005-08-02 20:01:20.000000000 +0200
-+++ Zope-3.1.0c1/Dependencies/zope.app.server-Zope-3.1.0c1/zope.app.server/mkzopeinstance.py	2005-08-30 12:14:12.000000000 +0200
+diff -dur -x '*~' Zope-3.1.0.orig/Dependencies/zope.app.server-Zope-3.1.0/zope.app.server/mkzopeinstance.py Zope-3.1.0/Dependencies/zope.app.server-Zope-3.1.0/zope.app.server/mkzopeinstance.py
+--- Zope-3.1.0.orig/Dependencies/zope.app.server-Zope-3.1.0/zope.app.server/mkzopeinstance.py	2005-08-02 20:01:20.000000000 +0200
++++ Zope-3.1.0/Dependencies/zope.app.server-Zope-3.1.0/zope.app.server/mkzopeinstance.py	2005-08-30 12:14:12.000000000 +0200
 @@ -248,7 +248,7 @@
          options.add_package_includes = from_checkout
          basedir = os.path.dirname(path)

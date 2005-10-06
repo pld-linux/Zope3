@@ -1,21 +1,25 @@
+#
+# TODO:
+#	- fix installzope3package
+#
 Summary:	An application server and portal toolkit for building Web sites
 Summary(es):	Un servidor de aplicaciones y un conjunto de herramientas para la construcción de sitios Web
 Summary(pl):	Serwer aplikacji i toolkit portalowy do tworzenia serwisów WWW
 Summary(pt_BR):	Um servidor de aplicações e um conjunto de ferramentas para construção de sites Web
 Name:		Zope3
 Version:	3.1.0
-%define		sub_ver c1
-Release:	0.%{sub_ver}.0.2
+Release:	0.1
 License:	Zope Public License (ZPL)
 Group:		Networking/Daemons
-Source0:	http://www.zope.org/Products/Zope3/%{version}%{sub_ver}/%{name}-%{version}%{sub_ver}.tgz
-# Source0-md5:	e22eeeae5de89c0eea9edabe3f2c3c4d
+Source0:	http://www.zope.org/Products/Zope3/%{version}final/Zope-%{version}.tgz
+# Source0-md5:	7e4c383479753639cddb14e2914582eb
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
 Source3:	%{name}.logrotate
 Source4:	mkzope3instance
 Source5:	installzope3package
 Patch0:		%{name}-skeleton_path.patch
+Patch1:		%{name}-python_2_4_2.patch
 URL:		http://dev.zope.org/Zope3
 BuildRequires:	python-devel >= 1:2.4.1
 BuildRequires:	perl-base
@@ -127,8 +131,9 @@ powinny mieæ minimalne zale¿no¶ci wzajemne, chocia¿ wiêkszo¶æ zale¿y
 od "zope.interface".
 
 %prep
-%setup -q -n Zope-%{version}%{sub_ver}
+%setup -q -n Zope-%{version}
 %patch0 -p1
+%patch1 -p1
 
 cp %{SOURCE4} ./mkzope3instance
 chmod a+x ./mkzope3instance
@@ -202,7 +207,7 @@ rm -rf $RPM_BUILD_ROOT
 if [ -f /var/lock/subsys/zope3-main ]; then
 	/etc/rc.d/init.d/zope3 restart 1>&2
 else
-	echo "Run \"/etc/rc.d/init.d/zopew start\" to start Zope 3 daemon."
+	echo "Run \"/etc/rc.d/init.d/zope3 start\" to start Zope 3 daemon."
 fi
 
 %preun

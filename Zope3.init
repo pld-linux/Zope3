@@ -34,7 +34,7 @@ zope_ctl()
 	action="$3"
 	errors=""
 	typeset -i exit_code=0
-	
+
 	show "$message"; busy
 	if ! cd "$instance_home/var" 2>/dev/null ; then
 		fail
@@ -62,7 +62,7 @@ start_instances()
 
 	if [ -f /var/lock/subsys/"zope3-$INSTANCE_NAME" ]; then
 		msg_already_running "Zope 3 instance $INSTANCE_NAME"
-		continue	
+		continue
 	fi
 
 	zope_ctl "Starting Zope instance $INSTANCE_NAME" "$INSTANCE_HOME" start
@@ -84,9 +84,9 @@ stop_instances()
 
 	if [ ! -f /var/lock/subsys/"zope3-$INSTANCE_NAME" ]; then
 		msg_not_running "Zope 3 instance $INSTANCE_NAME"
-		continue	
+		continue
 	fi
-	
+
 	zope_ctl "Stopping Zope instance $INSTANCE_NAME" "$INSTANCE_HOME" stop
 
 	RET=$?

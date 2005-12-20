@@ -15,7 +15,9 @@ AUTO_INSTALL_PRODUCTS=main
 
 if [ "${pkg_dir}" != "-d" ] ; then
 	for instance in $AUTO_INSTALL_PRODUCTS ; do
-		ln -s "/etc/zope3/zopeskel/package-includes/${pkg_name}"-{meta,configure}.zcml "/etc/zope3/${instance}/package-includes"
+		[ -e "/etc/zope3/zopeskel/package-includes/${pkg_name}-meta.zcml" ] && \
+			ln -s "/etc/zope3/zopeskel/package-includes/${pkg_name}-meta.zcml" "/etc/zope3/${instance}/package-includes"
+		ln -s "/etc/zope3/zopeskel/package-includes/${pkg_name}-configure.zcml" "/etc/zope3/${instance}/package-includes"
 	done
 else
 	for instance in $AUTO_INSTALL_PRODUCTS ; do

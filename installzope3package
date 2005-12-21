@@ -3,7 +3,10 @@
 pkg_dir="$1"
 pkg_name="$2"
 
-if [ "${pkg_dir}" != "-d" -a ! -d "${pkg_dir}" -o -z "${pkg_name}" ] ; then
+is_d=0
+[ "${pkg_dir}" = "-d" ] && is_d=1
+
+if [ "${is_d}" -eq 0 -a ! -d "${pkg_dir}" -o -z "${pkg_name}" ] ; then
 	echo "Usage:" >&2
 	echo "   $0 <package_directory> <package_name>"
 	echo "   $0 [-d] <package_name>"
@@ -16,8 +19,8 @@ AUTO_INSTALL_PRODUCTS=main
 if [ "${pkg_dir}" != "-d" ] ; then
 	for instance in $AUTO_INSTALL_PRODUCTS ; do
 		[ -e "/etc/zope3/zopeskel/package-includes/${pkg_name}-meta.zcml" ] && \
-			ln -s "/etc/zope3/zopeskel/package-includes/${pkg_name}-meta.zcml" "/etc/zope3/${instance}/package-includes"
-		ln -s "/etc/zope3/zopeskel/package-includes/${pkg_name}-configure.zcml" "/etc/zope3/${instance}/package-includes"
+			ln -s "/etc/zope3/zopeskel/etc/package-includes/${pkg_name}-meta.zcml" "/etc/zope3/${instance}/package-includes"
+		ln -s "/etc/zope3/zopeskel/etc/package-includes/${pkg_name}-configure.zcml" "/etc/zope3/${instance}/package-includes"
 	done
 else
 	for instance in $AUTO_INSTALL_PRODUCTS ; do

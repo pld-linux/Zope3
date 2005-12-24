@@ -1,14 +1,11 @@
 #
-# TODO:
-#	- fix installzope3package
-#
 Summary:	An application server and portal toolkit for building Web sites
 Summary(es):	Un servidor de aplicaciones y un conjunto de herramientas para la construcción de sitios Web
 Summary(pl):	Serwer aplikacji i toolkit portalowy do tworzenia serwisów WWW
 Summary(pt_BR):	Um servidor de aplicações e um conjunto de ferramentas para construção de sites Web
 Name:		Zope3
 Version:	3.1.0
-Release:	0.1
+Release:	1
 License:	Zope Public License (ZPL)
 Group:		Networking/Daemons
 Source0:	http://www.zope.org/Products/Zope3/%{version}final/Zope-%{version}.tgz

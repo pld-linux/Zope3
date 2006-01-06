@@ -4,12 +4,12 @@ Summary(es):	Un servidor de aplicaciones y un conjunto de herramientas para la c
 Summary(pl):	Serwer aplikacji i toolkit portalowy do tworzenia serwisów WWW
 Summary(pt_BR):	Um servidor de aplicações e um conjunto de ferramentas para construção de sites Web
 Name:		Zope3
-Version:	3.1.0
-Release:	1
+Version:	3.2.0
+Release:	0.1
 License:	Zope Public License (ZPL)
 Group:		Networking/Daemons
 Source0:	http://www.zope.org/Products/Zope3/%{version}final/Zope-%{version}.tgz
-# Source0-md5:	7e4c383479753639cddb14e2914582eb
+# Source0-md5:	dbbb708281ebcf7186aa7aa3ee46844c
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
 Source3:	%{name}.logrotate
@@ -161,7 +161,8 @@ from zope.app.server.mkzopeinstance import main
 sys.exit(main(from_checkout=False))
 EOF
 
-PYTHONPATH="$RPM_BUILD_ROOT%{py_sitedir}:$RPM_BUILD_ROOT%{zope_libdir}/lib/python" \
+# plain text
+echo "1" | PYTHONPATH="$RPM_BUILD_ROOT%{py_sitedir}:$RPM_BUILD_ROOT%{zope_libdir}/lib/python" \
 	DESTDIR="$RPM_BUILD_ROOT" ./mkzope3instance main \
 -u zope:zope -s $RPM_BUILD_ROOT%{_sysconfdir}/zope3/zopeskel
 

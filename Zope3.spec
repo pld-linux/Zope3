@@ -41,7 +41,7 @@ Provides:	group(zope)
 Provides:	user(zope)
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define		zope_libdir /usr/lib/zope3
+%define		zope_libdir /usr/%{_lib}/zope3
 %define		zope_datadir /usr/share/zope3
 
 %description

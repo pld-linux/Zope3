@@ -132,8 +132,7 @@ od "zope.interface".
 %patch0 -p1
 %patch1 -p1
 
-cp %{SOURCE4} ./mkzope3instance
-chmod a+x ./mkzope3instance
+install -m755 %{SOURCE4} ./mkzope3instance
 
 %build
 ./configure \
@@ -150,7 +149,7 @@ install -d $RPM_BUILD_ROOT{%{py_sitedir},%{_sbindir},%{zope_datadir}/lib/python}
 $RPM_BUILD_ROOT%{_sysconfdir}/zope3/main
 
 python install.py -q install --skip-build --home "%{zope_libdir}" --root "$RPM_BUILD_ROOT"
-mv $RPM_BUILD_ROOT%{zope_libdir}/lib/python/zope  $RPM_BUILD_ROOT%{py_sitedir}
+mv $RPM_BUILD_ROOT%{zope_libdir}/%{_lib}/python/zope  $RPM_BUILD_ROOT%{py_sitedir}
 rm $RPM_BUILD_ROOT%{zope_libdir}/zopeskel/bin/{*.bat.in,zopeservice*}
 mv $RPM_BUILD_ROOT%{zope_libdir}/zopeskel $RPM_BUILD_ROOT%{_sysconfdir}/zope3
 
@@ -162,14 +161,14 @@ sys.exit(main(from_checkout=False))
 EOF
 
 # plain text
-echo "1" | PYTHONPATH="$RPM_BUILD_ROOT%{py_sitedir}:$RPM_BUILD_ROOT%{zope_libdir}/lib/python" \
+echo "1" | PYTHONPATH="$RPM_BUILD_ROOT%{py_sitedir}:$RPM_BUILD_ROOT%{zope_libdir}/%{_lib}/python" \
 	DESTDIR="$RPM_BUILD_ROOT" ./mkzope3instance main \
 -u zope:zope -s $RPM_BUILD_ROOT%{_sysconfdir}/zope3/zopeskel
 
 cat >> $RPM_BUILD_ROOT%{py_sitedir}/zope/app/__init__.py <<EOF
 import sys
-sys.path.insert(0,"%{zope_libdir}/lib/python")
-sys.path.insert(0,"%{zope_datadir}/lib/python")
+sys.path.insert(0,"%{zope_libdir}/%{_lib}/python")
+sys.path.insert(0,"%{zope_datadir}/%{_lib}/python")
 EOF
 
 %py_comp $RPM_BUILD_ROOT%{py_sitedir}/zope
@@ -231,7 +230,7 @@ fi
 %dir %{zope_libdir}/bin
 %attr(755,root,root) %{zope_libdir}/bin/*
 %{zope_libdir}/include
-%{zope_libdir}/lib
+%{zope_libdir}/%{_lib}
 %{zope_datadir}
 %{py_sitedir}/zope/app
 %attr(775,root,zope) %dir /var/run/zope3

@@ -5,7 +5,7 @@ Summary(pl):	Serwer aplikacji i toolkit portalowy do tworzenia serwisów WWW
 Summary(pt_BR):	Um servidor de aplicações e um conjunto de ferramentas para construção de sites Web
 Name:		Zope3
 Version:	3.2.0
-Release:	0.2
+Release:	1
 License:	Zope Public License (ZPL)
 Group:		Networking/Daemons
 Source0:	http://www.zope.org/Products/Zope3/%{version}final/Zope-%{version}.tgz
@@ -173,7 +173,8 @@ EOF
 
 %py_comp $RPM_BUILD_ROOT%{py_sitedir}/zope
 %py_ocomp $RPM_BUILD_ROOT%{py_sitedir}/zope
-%py_postclean
+# breaks pyskel
+# %%py_postclean
 
 for f in zconfig zconfig_schema2html zopetest; do
 	ln -sf %{zope_libdir}/bin/"$f" $RPM_BUILD_ROOT%{_sbindir}/"$f"

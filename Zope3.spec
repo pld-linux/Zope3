@@ -168,7 +168,7 @@ echo "1" | PYTHONPATH="$RPM_BUILD_ROOT%{py_sitedir}:$RPM_BUILD_ROOT%{zope_libdir
 cat >> $RPM_BUILD_ROOT%{py_sitedir}/zope/app/__init__.py <<EOF
 import sys
 sys.path.insert(0,"%{zope_libdir}/%{_lib}/python")
-sys.path.insert(0,"%{zope_datadir}/%{_lib}/python")
+sys.path.insert(0,"%{zope_datadir}/lib/python")
 EOF
 
 %py_comp $RPM_BUILD_ROOT%{py_sitedir}/zope

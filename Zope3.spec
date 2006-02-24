@@ -18,24 +18,24 @@ Source5:	installzope3package
 Patch0:		%{name}-skeleton_path.patch
 Patch1:		%{name}-python_2_4_2.patch
 URL:		http://dev.zope.org/Zope3
-BuildRequires:	python-devel >= 1:2.4.1
 BuildRequires:	perl-base
+BuildRequires:	python-devel >= 1:2.4.1
 BuildRequires:	rpmbuild(macros) >= 1.213
-Requires:	rc-scripts
+Requires(post,preun):	/sbin/chkconfig
 Requires(post,preun):	rc-scripts
+Requires(postun):	/usr/sbin/groupdel
+Requires(postun):	/usr/sbin/userdel
 Requires(pre):	/bin/id
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
-Requires(postun):	/usr/sbin/groupdel
-Requires(postun):	/usr/sbin/userdel
-Requires(post,preun):	/sbin/chkconfig
 Requires:	expat >= 1.95.7
 Requires:	logrotate
 Requires:	python >= 2.4.1
-Requires:	python-modules >= 2.4.1
 Requires:	python-libs >= 2.4.1
+Requires:	python-modules >= 2.4.1
 Requires:	python-zope = %{epoch}:%{version}-%{release}
+Requires:	rc-scripts
 %pyrequires_eq	python
 Provides:	group(zope)
 Provides:	user(zope)
@@ -202,17 +202,11 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 /sbin/chkconfig --add zope3
-if [ -f /var/lock/subsys/zope3-main ]; then
-	/etc/rc.d/init.d/zope3 restart 1>&2
-else
-	echo "Run \"/etc/rc.d/init.d/zope3 start\" to start Zope 3 daemon."
-fi
+%service zope3 restart "Zope 3 daemon"
 
 %preun
 if [ "$1" = "0" ]; then
-	if [ -f /var/lock/subsys/zope3 ]; then
-		/etc/rc.d/init.d/zope3 stop
-	fi
+	%service zope3 stop
 	/sbin/chkconfig --del zope3
 fi
 

@@ -5,7 +5,7 @@ Summary(pl):	Serwer aplikacji i toolkit portalowy do tworzenia serwisów WWW
 Summary(pt_BR):	Um servidor de aplicações e um conjunto de ferramentas para construção de sites Web
 Name:		Zope3
 Version:	3.2.0
-Release:	2
+Release:	3
 License:	Zope Public License (ZPL)
 Group:		Networking/Daemons
 Source0:	http://www.zope.org/Products/Zope3/%{version}final/Zope-%{version}.tgz
@@ -16,7 +16,6 @@ Source3:	%{name}.logrotate
 Source4:	mkzope3instance
 Source5:	installzope3package
 Patch0:		%{name}-skeleton_path.patch
-Patch1:		%{name}-python_2_4_2.patch
 URL:		http://dev.zope.org/Zope3
 BuildRequires:	perl-base
 BuildRequires:	python-devel >= 1:2.4.1
@@ -130,13 +129,12 @@ od "zope.interface".
 %prep
 %setup -q -n Zope-%{version}
 %patch0 -p1
-%patch1 -p1
-
 install -m755 %{SOURCE4} ./mkzope3instance
 
 %build
 ./configure \
 	--prefix=%{zope_libdir} \
+	--with-python=%{__python} \
 	--force
 %{__make}
 

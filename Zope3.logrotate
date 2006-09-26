@@ -1,6 +1,6 @@
 /var/log/zope3/*/*.log {
 	create 644 zope zope	
 	postrotate
-		/etc/rc.d/init.d/zope3 restart >/dev/null 2>&1
+		/sbin/service zope3 restart >/dev/null 2>&1
 	endscript
 }

@@ -1,8 +1,8 @@
 #
 Summary:	An application server and portal toolkit for building Web sites
-Summary(es):	Un servidor de aplicaciones y un conjunto de herramientas para la construcción de sitios Web
-Summary(pl):	Serwer aplikacji i toolkit portalowy do tworzenia serwisów WWW
-Summary(pt_BR):	Um servidor de aplicações e um conjunto de ferramentas para construção de sites Web
+Summary(es.UTF-8):   Un servidor de aplicaciones y un conjunto de herramientas para la construcciÃ³n de sitios Web
+Summary(pl.UTF-8):   Serwer aplikacji i toolkit portalowy do tworzenia serwisÃ³w WWW
+Summary(pt_BR.UTF-8):   Um servidor de aplicaÃ§Ãµes e um conjunto de ferramentas para construÃ§Ã£o de sites Web
 Name:		Zope3
 Version:	3.2.0
 Release:	5
@@ -52,34 +52,34 @@ high-performance, integrated object database.
 This project is a redesign of Zope 2 and seeks to improve the Zope
 development experience through the use of Interfaces and Components.
 
-%description -l es
-Zope es una aplicación basada en Python, Open Source[tm], para la
-construcción de sitios dinámicos, usa un modelo de escritura de
-guiones poderoso y sencillo. Para instalar la aplicación Zope, instale
-ese paquete y después, Zope-server, para un servidor HTTP integrado
+%description -l es.UTF-8
+Zope es una aplicaciÃ³n basada en Python, Open Source[tm], para la
+construcciÃ³n de sitios dinÃ¡micos, usa un modelo de escritura de
+guiones poderoso y sencillo. Para instalar la aplicaciÃ³n Zope, instale
+ese paquete y despuÃ©s, Zope-server, para un servidor HTTP integrado
 simple, Zope-pcgi, para uso con el servidor Apache. Si desea instalar
-solamente algunas partes de la aplicación Zope, están diponibles otros
-subpaquetes, usted debe instalar éstos en vez de ese RPM.
+solamente algunas partes de la aplicaciÃ³n Zope, estÃ¡n diponibles otros
+subpaquetes, usted debe instalar Ã©stos en vez de ese RPM.
 
-%description -l pl
-Zope (Z Object Programming Environment - Obiektowe ¦rodowisko
+%description -l pl.UTF-8
+Zope (Z Object Programming Environment - Obiektowe Åšrodowisko
 Programistyczne Z) jest opartym o Pythona serwerem aplikacji do
-tworzenia wysoko wydajnych, dynamicznych serwisów WWW, przy u¿yciu
-u¿ytecznego i prostego modelu obiektowego skryptów oraz wysoko
+tworzenia wysoko wydajnych, dynamicznych serwisÃ³w WWW, przy uÅ¼yciu
+uÅ¼ytecznego i prostego modelu obiektowego skryptÃ³w oraz wysoko
 wydajnej zintegrowanej obiektowej bazy danych.
 
-%description -l pt_BR
-Zope é uma aplicação baseada em Python, Open Source[tm], para
-construção de sites dinâmicos, usando um modelo de scripting poderoso
+%description -l pt_BR.UTF-8
+Zope Ã© uma aplicaÃ§Ã£o baseada em Python, Open Source[tm], para
+construÃ§Ã£o de sites dinÃ¢micos, usando um modelo de scripting poderoso
 e simples Para instalar o Zope, instale esse pacote e depois, ou o
 Zope-server, para um servidor HTTP integrado simples, ou Zope-pcgi,
-para uso com o Apache. Se você quiser instalar apenas algumas partes
-do Zope, outros sub-pacotes estão disponíveis, e você deveria instalar
-eles ao invés desse RPM.
+para uso com o Apache. Se vocÃª quiser instalar apenas algumas partes
+do Zope, outros sub-pacotes estÃ£o disponÃ­veis, e vocÃª deveria instalar
+eles ao invÃ©s desse RPM.
 
 %package -n python-zope
 Summary:	Python packages developed as part of the Zope 3 project
-Summary(pl):	Modu³y Pythona rozwijane w projekcie Zope 3
+Summary(pl.UTF-8):   ModuÅ‚y Pythona rozwijane w projekcie Zope 3
 Group:		Development/Tools
 Provides:	ZopeInterface
 Provides:	python-zope-cachedescriptors = %{epoch}:%{version}-%{release}
@@ -117,13 +117,13 @@ useful and usable outside of the Zope application server. Subpackages
 of the "zope" package should have minimal interdependencies, although
 most depend on "zope.interface".
 
-%description -n python-zope -l pl
-Pakiet "zope" to pakiet czystej przestrzeni nazw przechowuj±cej
-pakiety tworzone jako czê¶æ projektu Zope 3.
+%description -n python-zope -l pl.UTF-8
+Pakiet "zope" to pakiet czystej przestrzeni nazw przechowujÄ…cej
+pakiety tworzone jako czÄ™Å›Ä‡ projektu Zope 3.
 
-Ogólnie bezpo¶rednie podpakiety pakietu "zope" powinny byæ przydatne i
-u¿ywalne poza serwerem aplikacji Zope. Podpakiety pakietu "zope"
-powinny mieæ minimalne zale¿no¶ci wzajemne, chocia¿ wiêkszo¶æ zale¿y
+OgÃ³lnie bezpoÅ›rednie podpakiety pakietu "zope" powinny byÄ‡ przydatne i
+uÅ¼ywalne poza serwerem aplikacji Zope. Podpakiety pakietu "zope"
+powinny mieÄ‡ minimalne zaleÅ¼noÅ›ci wzajemne, chociaÅ¼ wiÄ™kszoÅ›Ä‡ zaleÅ¼y
 od "zope.interface".
 
 %prep

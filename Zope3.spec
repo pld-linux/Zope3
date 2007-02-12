@@ -1,8 +1,8 @@
 #
 Summary:	An application server and portal toolkit for building Web sites
-Summary(es.UTF-8):   Un servidor de aplicaciones y un conjunto de herramientas para la construcción de sitios Web
-Summary(pl.UTF-8):   Serwer aplikacji i toolkit portalowy do tworzenia serwisów WWW
-Summary(pt_BR.UTF-8):   Um servidor de aplicações e um conjunto de ferramentas para construção de sites Web
+Summary(es.UTF-8):	Un servidor de aplicaciones y un conjunto de herramientas para la construcción de sitios Web
+Summary(pl.UTF-8):	Serwer aplikacji i toolkit portalowy do tworzenia serwisów WWW
+Summary(pt_BR.UTF-8):	Um servidor de aplicações e um conjunto de ferramentas para construção de sites Web
 Name:		Zope3
 Version:	3.2.0
 Release:	5
@@ -79,7 +79,7 @@ eles ao invés desse RPM.
 
 %package -n python-zope
 Summary:	Python packages developed as part of the Zope 3 project
-Summary(pl.UTF-8):   Moduły Pythona rozwijane w projekcie Zope 3
+Summary(pl.UTF-8):	Moduły Pythona rozwijane w projekcie Zope 3
 Group:		Development/Tools
 Provides:	ZopeInterface
 Provides:	python-zope-cachedescriptors = %{epoch}:%{version}-%{release}

@@ -4,12 +4,12 @@ Summary(es.UTF-8):	Un servidor de aplicaciones y un conjunto de herramientas par
 Summary(pl.UTF-8):	Serwer aplikacji i toolkit portalowy do tworzenia serwisów WWW
 Summary(pt_BR.UTF-8):	Um servidor de aplicações e um conjunto de ferramentas para construção de sites Web
 Name:		Zope3
-Version:	3.2.0
-Release:	5
+Version:	3.4.0
+Release:	1
 License:	Zope Public License (ZPL)
 Group:		Networking/Daemons
-Source0:	http://www.zope.org/Products/Zope3/%{version}final/Zope-%{version}.tgz
-# Source0-md5:	dbbb708281ebcf7186aa7aa3ee46844c
+Source0:	http://www.zope.org/Products/Zope3/%{version}/Zope-%{version}.tgz
+# Source0-md5:	23fbe371434833b2e52353af5bc456da
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
 Source3:	%{name}.logrotate
@@ -244,8 +244,6 @@ fi
 %attr(751,root,zope) %dir %{_sysconfdir}/zope3/main/package-includes
 %attr(640,root,zope) %dir %{_sysconfdir}/zope3/main/*.conf
 %{_sysconfdir}/zope3/main/*.zcml
-%{_sysconfdir}/zope3/main/*.pem
-%{_sysconfdir}/zope3/main/ssh_host_rsa_key
 %{_sysconfdir}/zope3/main/package-includes/*.zcml
 %{_sysconfdir}/zope3/main/package-includes/README.txt
 %dir %{_sysconfdir}/zope3/zopeskel

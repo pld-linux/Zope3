@@ -1,4 +1,5 @@
 /var/log/zope3/*/*.log {
+	su zope zope	
 	create 644 zope zope	
 	postrotate
 		/sbin/service zope3 restart >/dev/null 2>&1

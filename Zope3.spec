@@ -5,7 +5,7 @@ Summary(pl.UTF-8):	Serwer aplikacji i toolkit portalowy do tworzenia serwisów W
 Summary(pt_BR.UTF-8):	Um servidor de aplicações e um conjunto de ferramentas para construção de sites Web
 Name:		Zope3
 Version:	3.4.0
-Release:	1
+Release:	2
 License:	Zope Public License (ZPL)
 Group:		Networking/Daemons
 Source0:	http://www.zope.org/Products/Zope3/%{version}/Zope-%{version}.tgz
@@ -38,6 +38,7 @@ Requires:	rc-scripts
 %pyrequires_eq	python
 Provides:	group(zope)
 Provides:	user(zope)
+Conflicts:	logrotate < 3.8.0
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		zope_libdir /usr/%{_lib}/zope3
